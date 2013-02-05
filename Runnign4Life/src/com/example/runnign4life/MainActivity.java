@@ -2,9 +2,10 @@ package com.example.runnign4life;
 
 import java.util.Date;
 
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -15,9 +16,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.runnign4life.dao.CorridaDAO;
+import com.example.runnign4life.fragments.CorridaFragment;
+import com.example.runnign4life.fragments.HistoricoFragment;
+import com.example.runnign4life.fragments.TabListener;
+
 public class MainActivity extends Activity implements LocationListener {
 
-	public static final String FILENAME = "corridas";
+	
 	private Location lastLocation = null;
 	private LocationManager locationmanager;
 	private Double distanciaPercorrida = 0.0;
@@ -30,20 +36,32 @@ public class MainActivity extends Activity implements LocationListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		editText1 = (EditText) findViewById(R.id.editText1);
-		editText2 = (EditText) findViewById(R.id.editText2);
-		button1 = (Button) findViewById(R.id.button1);
-	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
+		setContentView(R.layout.activity_main);
+		ActionBar actionBar = getActionBar();
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		actionBar.setDisplayShowTitleEnabled(false);
+		
+		Tab tab = actionBar.newTab()
+	            .setText("Corridas")
+	            .setTabListener(new TabListener<CorridaFragment>(
+                    this, "corridas", CorridaFragment.class));
+	    actionBar.addTab(tab);
+	    
+	    tab = actionBar.newTab()
+	            .setText("Hist—rico")
+	            .setTabListener(new TabListener<HistoricoFragment>(
+                    this, "historico", HistoricoFragment.class));
+	    actionBar.addTab(tab);
+	    
+		
 	}
 
 	public void iniciar(View view) {
+		
+		editText1 = (EditText) findViewById(R.id.editText1);
+		editText2 = (EditText) findViewById(R.id.editText2);
+		button1 = (Button) findViewById(R.id.button1);
 		if (stop == -1) {
 			Long tempoEmSegundos = (System.currentTimeMillis() - this.TEMPO_INICIAL) / 1000;
 			editText2.setText(tempoEmSegundos + "s");
@@ -65,8 +83,8 @@ public class MainActivity extends Activity implements LocationListener {
 	}
 
 	private void salvarCorrida(Long tempoEmSegundos) {
-		String corrida = distanciaPercorrida/1000 + "km em " + tempoEmSegundos + "s ("
-				+ new Date().toGMTString() + ")";
+		String corrida = distanciaPercorrida / 1000 + "km em "
+				+ tempoEmSegundos + "s (" + new Date().toGMTString() + ")";
 		Toast.makeText(this, corrida, 900).show();
 		new CorridaDAO().corridas.add(corrida);
 
@@ -89,16 +107,12 @@ public class MainActivity extends Activity implements LocationListener {
 			this.lastLocation = location;
 
 			System.out.println("DISTANCIA PERCORRIDA: " + distanciaPercorrida);
-			editText1.setText(distanciaPercorrida/1000 + "km");
+			editText1.setText(distanciaPercorrida / 1000 + "km");
 
 		} else {
 			Toast.makeText(this, "n‹o conectou GPS!", Toast.LENGTH_LONG).show();
 		}
 
-	}
-
-	public void historico(View view) {
-		startActivity(new Intent(this, HistoryActivity.class));
 	}
 
 	@Override
@@ -108,11 +122,11 @@ public class MainActivity extends Activity implements LocationListener {
 
 	@Override
 	public void onProviderEnabled(String arg0) {
-		
+
 	}
 
 	@Override
 	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-	
+
 	}
 }

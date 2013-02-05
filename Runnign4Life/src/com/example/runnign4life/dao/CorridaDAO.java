@@ -1,4 +1,4 @@
-package com.example.runnign4life;
+package com.example.runnign4life.dao;
 
 import java.util.ArrayList;
 import java.util.List;
