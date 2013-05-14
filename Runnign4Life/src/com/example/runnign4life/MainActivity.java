@@ -1,5 +1,6 @@
 package com.example.runnign4life;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 
 import android.app.ActionBar;
@@ -10,7 +11,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -64,7 +64,6 @@ public class MainActivity extends Activity implements LocationListener {
 		button1 = (Button) findViewById(R.id.button1);
 		if (stop == -1) {
 			Long tempoEmSegundos = (System.currentTimeMillis() - this.TEMPO_INICIAL) / 1000;
-			editText2.setText(tempoEmSegundos + "s");
 			lastLocation = null;
 			button1.setText("Iniciar Corrida");
 			salvarCorrida(tempoEmSegundos);
@@ -83,7 +82,9 @@ public class MainActivity extends Activity implements LocationListener {
 	}
 
 	private void salvarCorrida(Long tempoEmSegundos) {
-		String corrida = distanciaPercorrida / 1000 + "km em "
+		
+		DecimalFormat df = new DecimalFormat("#,###.00");  
+		String corrida = df.format(distanciaPercorrida / 1000 ) + "km em "
 				+ tempoEmSegundos + "s (" + new Date().toGMTString() + ")";
 		Toast.makeText(this, corrida, 900).show();
 		new CorridaDAO().corridas.add(corrida);
@@ -107,7 +108,10 @@ public class MainActivity extends Activity implements LocationListener {
 			this.lastLocation = location;
 
 			System.out.println("DISTANCIA PERCORRIDA: " + distanciaPercorrida);
-			editText1.setText(distanciaPercorrida / 1000 + "km");
+			DecimalFormat df = new DecimalFormat("#,###.00");
+			editText1.setText(df.format(distanciaPercorrida / 1000 ) + "km");
+			Long tempoEmSegundos = (System.currentTimeMillis() - this.TEMPO_INICIAL) / 1000;
+			editText2.setText(tempoEmSegundos+"s");
 
 		} else {
 			Toast.makeText(this, "n‹o conectou GPS!", Toast.LENGTH_LONG).show();
